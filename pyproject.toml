@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "distrib-l2r"
+version = "0.1.0"
+description = "a distributed solution to l2r with Kubernetes"
+readme = "README.md"
+authors = [
+    "Jimmy Herman <jimmyherman29@gmail.com>",
+]
+
+license = "GPLv3"
+repository = "https://github.com/hermgerm29/distributed-l2r"
+keywords = [
+    "reinforcement learning",
+    "deep learning",
+    "racing",
+    "robotics",
+    "machine learning",
+    "computer vision"
+]
+
+[[tool.poetry.source]]
+name = "public"
+url = "https://pypi.python.org/simple/"
+
+[tool.poetry.dependencies]
+l2r = "^0.0.1"
+tianshou = "^0.4"
+
+[tool.poetry.dev-dependencies]
+black = "^22.6"
+coverage = "^6.0"
+pre-commit = "^2.14"
+
+[tool.black]
+line-length = 88
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
