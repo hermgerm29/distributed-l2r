@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "distrib-l2r"
+name = "distrib_l2r"
 version = "0.1.0"
-description = "a distributed solution to l2r with Kubernetes"
+description = "a distributed solution to l2r using Kubernetes"
 readme = "README.md"
 authors = [
     "Jimmy Herman <jimmyherman29@gmail.com>",
@@ -23,12 +23,14 @@ name = "public"
 url = "https://pypi.python.org/simple/"
 
 [tool.poetry.dependencies]
+python = "^3.9"
 l2r = "^0.0.1"
 tianshou = "^0.4"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6"
 coverage = "^6.0"
+deepdiff = "^5"
 pre-commit = "^2.14"
 
 [tool.black]
