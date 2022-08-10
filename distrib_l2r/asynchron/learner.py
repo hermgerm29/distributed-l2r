@@ -4,6 +4,7 @@ import queue
 import socketserver
 from typing import Callable
 from typing import Optional
+from typing import Tuple
 
 from tianshou.data import ReplayBuffer
 from tianshou.policy import BasePolicy
@@ -26,7 +27,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         # Add this buff
         if isinstance(msg, BufferMsg):
             logging.info("Received replay buffer")
-            self.server.learning_queue.put(msg.data)
+            self.server.buffer_queue.put(msg.data)
 
         # Received an init message from a worker
         # Immediately reply with the most up-to-date policy
@@ -42,7 +43,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             logging.warning(f"Received unexpected data: {type(msg)}")
             return
 
-        # Send policy back
+        # Reply to the request with an up-to-date policy
         send_data(data=self.server.get_policy(), sock=self.request)
 
 
@@ -50,7 +51,14 @@ class AsyncLearningNode(socketserver.ThreadingMixIn, socketserver.TCPServer):
     """A multi-threaded, offline, off-policy reinforcement learning server
 
     Args:
-        pass
+        policy: an intial Tianshou policy
+        update_steps: the number of gradient updates for each buffer received
+        batch_size: the batch size for gradient updates
+        epochs: the number of buffers to receive before concluding learning
+        server_address: the address the server runs on
+        save_func: a function for saving which is called while learning with
+          parameters `epoch` and `policy`
+        save_freq: the frequency, in epochs, to save
     """
 
     def __init__(
@@ -60,10 +68,14 @@ class AsyncLearningNode(socketserver.ThreadingMixIn, socketserver.TCPServer):
         batch_size: int = 128,
         epochs: int = 500,
         buffer_size: int = 1_000_000,
+        server_address: Tuple[str, int] = ("0.0.0.0", 4444),
         save_func: Optional[Callable] = None,
         save_freq: Optional[int] = None,
     ) -> None:
 
+        super().__init__(server_address, ThreadedTCPRequestHandler)
+
+        self.update_steps = update_steps
         self.batch_size = batch_size
         self.epochs = epochs
 
@@ -110,18 +122,18 @@ class AsyncLearningNode(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
         self.policy_queue.put(pickle.dumps(self.policy.state_dict()))
 
-    def learning_loop(self) -> None:
+    def learn(self) -> None:
         """The thread where thread-safe gradient updates occur"""
         for epoch in range(self.epochs):
 
             # block until new data is received
-            batch = self.learning_queue.get()
+            batch = self.buffer_queue.get()
 
             # Add new data to the primary replay buffer
             self.replay_buffer.update(batch)
 
             # Learning steps for the policy
-            for _ in self.update_steps:
+            for _ in range(self.update_steps):
                 _ = self.policy.update(
                     sample_size=self.batch_size, buffer=self.replay_buffer
                 )
