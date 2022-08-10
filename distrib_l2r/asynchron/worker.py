@@ -55,14 +55,10 @@ class AsnycWorker:
                 policy=policy, policy_id=policy_id, is_train=is_train
             )
 
-            # If training, send the replay buffer to the worker. The learner will
-            # reply with
-
             if is_train:
                 response = send_data(
                     data=BufferMsg(data=buffer), addr=self.learner_address, reply=True
                 )
-                is_train = response.data["is_train"]
 
             else:
                 response = send_data(
@@ -70,8 +66,8 @@ class AsnycWorker:
                     addr=self.learner_address,
                     reply=True,
                 )
-                is_train = True
 
+            is_train = response.data["is_train"]
             policy_id, policy = response.data["policy_id"], response.data["policy"]
 
     def collect_data(
