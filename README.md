@@ -106,4 +106,4 @@ spec:
 
 ### Original Work
 
-This is a revival of an original work that James Herman completed at Carnegie Mellon. For reference, the paper and experimental results of the distributed system are located at https://github.com/hermgerm29/distrib_l2r/assets/extending_l2r_with_distributed_deep_rl.pdf.
+This is a revival of an original work that James Herman completed at Carnegie Mellon. For reference, the paper and experimental results of the distributed system are located at https://github.com/hermgerm29/distributed-l2r/blob/main/assets/extending_l2r_with_distributed_deep_rl.pdf.
