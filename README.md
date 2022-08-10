@@ -1,7 +1,6 @@
 # distributed-l2r
 Achieving near-human speed performance in l2r with Kubernetes
 
-
 ## Example Usage
 
 For brevity, some parts of this example, such as Dockerfiles and requirement installation, are excluded.
@@ -104,3 +103,7 @@ spec:
             - "-c"
             - "{{WORKER_CMD}}"
 ```
+
+### Original Work
+
+This is a revival of an original work that James Herman completed at Carnegie Mellon. For reference, the paper and experimental results of the distributed system are located at https://github.com/hermgerm29/distrib_l2r/assets/extending_l2r_with_distributed_deep_rl.pdf.
